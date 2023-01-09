@@ -13,15 +13,14 @@ public class Main {
 
     public static void main(String[] args) {
 
-        BufferedReader bf = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("Enter the path to the file: ");
-        //Гранты.csv
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.print("Имя файла (Гранты.csv) ");
         try {
-            String path = bf.readLine();
+            String path = br.readLine();
             GrantService grantService = new GrantService(path);
-            grantService.showGraph();
-            grantService.secondMission();
-            grantService.thirdMission();
+            grantService.graph();
+            grantService.second();
+            grantService.third();
         } catch (IOException e) {
             logger.info("Error in reading the line");
         }

@@ -25,7 +25,6 @@ public class GrantService {
             Class.forName("org.sqlite.JDBC");
             Connection connection = DriverManager.getConnection("jdbc:sqlite:grant.db");
             statement = connection.createStatement();
-            logger.info("Successful connection to the database.");
         } catch (ClassNotFoundException | SQLException e) {
             logger.info("Failed to connect to the database.");
             System.exit(0);
@@ -48,7 +47,6 @@ public class GrantService {
         try {
             statement.execute(drop);
             statement.execute(create);
-            logger.info("Successful creation of the table");
         } catch (SQLException e) {
             throw new RuntimeException("Unsuccessful table creation");
         }
@@ -61,7 +59,6 @@ public class GrantService {
                     .build()
                     .parse();
             insertValuesInDB(grants);
-            logger.info("Data successfully added");
         } catch (FileNotFoundException e) {
             logger.info("Error in adding data");
         }
@@ -93,7 +90,6 @@ public class GrantService {
             while (rs.next()) {
                 data.put(String.valueOf(rs.getInt("year_grant")), rs.getDouble("number_jobs"));
             }
-            logger.info("The data has been uploaded to the graph successfully. Check the panel.");
         } catch (SQLException e) {
             logger.info("Error in graph data");
         }
@@ -104,12 +100,12 @@ public class GrantService {
         return dataset;
     }
 
-    public void showGraph(){
+    public void graph(){
         var dataset = getDataForGraph();
         JFreeChart chart = ChartFactory.createBarChart(
-                "Average number of jobs",
-                "Year",
-                "Average number of jobs",
+                "График работ",
+                "Год",
+                "Среднее количество работ",
                 dataset);
         chart.setBackgroundPaint(Color.white);
 
@@ -121,22 +117,21 @@ public class GrantService {
         frame.setVisible(true);
     }
 
-    public void secondMission(){
+    public void second(){
         String sql = "SELECT AVG(grant_amount) as 'grant', type_business FROM grants WHERE type_business = 'Salon/Barbershop'";
         try {
             ResultSet resultSet = statement.executeQuery(sql);
             while(resultSet.next()){
-                logger.info("The SQL query for the second task worked correctly");
                 Thread.sleep(200);
-                System.out.println("The average grant for a "
-                        +resultSet.getString("type_business") +" is " + resultSet.getDouble("grant"));
+                System.out.println("Средний размер гранта для бизнеса типа "
+                        +resultSet.getString("type_business") +" = " + resultSet.getDouble("grant"));
             }
         } catch (SQLException | InterruptedException e) {
             logger.info("Error in the SQL request for the second task");
         }
     }
 
-    public void thirdMission(){
+    public void third(){
         double max = Double.MIN_VALUE;
         String type_business = "";
         String sql = "SELECT type_business, SUM(number_jobs) as 'number_jobs' FROM grants " +
@@ -150,9 +145,8 @@ public class GrantService {
                     type_business = resultSet.getString("type_business");
                 }
             }
-            logger.info("The SQL query for the third task worked correctly");
             Thread.sleep(200);
-            System.out.println(type_business + " provided the largest number of jobs");
+            System.out.println(type_business + " - тип бизнеса, предоставивший наибольшее количество рабочих мест, где размер гранта не превышает $55,000.00 ");
         } catch (SQLException | InterruptedException e) {
             logger.info("Error in the SQL request for the third task");
         }
